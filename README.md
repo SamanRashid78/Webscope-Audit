@@ -18,6 +18,43 @@ WebScope scans any live website and produces a scored report across four categor
 **Backend:** Node.js, Express, Axios, Cheerio
 **Frontend:** Vanilla JS, HTML, CSS, Vite, Lucide Icons, jsPDF/html2canvas
 
+## Project Structure
+```
+webscope-audit/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   ├── app.js                # UI controller, tab/theme/form wiring
+│   ├── auditEngine.js        # calls the backend /api/audit endpoint
+│   ├── presetData.js         # quick-sample preset audits
+│   ├── techDetector.js
+│   ├── seoAuditor.js
+│   ├── securityAuditor.js
+│   ├── perfAuditor.js
+│   ├── healthAuditor.js
+│   ├── leadGenerator.js
+│   ├── competitorCompare.js
+│   ├── historyManager.js
+│   └── pdfExporter.js
+├── server/
+│   ├── index.js               # Express app & API routes
+│   ├── package.json
+│   └── services/
+│       ├── auditEngine.js     # master audit coordinator
+│       ├── urlValidator.js    # SSRF protection (URL/IP validation)
+│       ├── techDetector.js
+│       ├── seoAuditor.js
+│       ├── securityAuditor.js
+│       ├── perfAuditor.js
+│       └── healthAuditor.js
+├── screenshots/
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+
 ## Screenshots
 
 _See `/screenshots` folder._
