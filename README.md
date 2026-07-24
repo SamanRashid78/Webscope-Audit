@@ -1,2 +1,54 @@
-# Webscope-Audit
-A full-stack website audit tool that scans any URL for SEO, security, performance, and health issues, scores it out of 100, and auto-generates a client outreach email. Node/Express + Cheerio backend, vanilla JS frontend. Includes SSRF protection, rate limiting, and restricted CORS.
+# WebScope — Website Audit & Lead Generation Tool
+
+WebScope scans any live website and produces a scored report across four categories — **SEO, Security, Performance, and Website Health** — then auto-generates a client-ready outreach email based on the issues found. Built as a full-stack tool for freelancers/agencies to quickly audit prospects' sites and turn findings into a pitch.
+
+## Features
+
+- 🔍 **Live site scanning** — fetches real HTML and HTTP headers from any URL (Node/Express + Axios + Cheerio)
+- 📊 **4-category scoring** — SEO, Security & Headers, Performance & Speed, Website Health
+- 🧩 **Tech stack detection** — identifies CMS, frameworks, analytics, CDNs, and payment providers in use
+- 📧 **Auto-generated outreach email** — turns audit findings into a ready-to-send client pitch
+- 🆚 **Competitor comparison** — audits two URLs side by side
+- 🕓 **Scan history** — revisit past audits
+- 📄 **PDF export** — download a client-facing report
+- 🔒 **Hardened API** — SSRF protection, rate limiting, and restricted CORS
+
+## Tech Stack
+
+**Backend:** Node.js, Express, Axios, Cheerio
+**Frontend:** Vanilla JS, HTML, CSS, Vite, Lucide Icons, jsPDF/html2canvas
+
+## Screenshots
+
+_See `/screenshots` folder._
+
+## Getting Started
+
+### Backend
+```bash
+cd server
+npm install
+node index.js
+```
+Runs on `http://localhost:5000`.
+
+### Frontend
+Open `client/index.html` directly in a browser, or serve it with Vite:
+```bash
+cd client
+npm install
+npm run dev
+```
+
+## Security
+
+The `/api/audit` endpoint validates target URLs before fetching them to prevent **SSRF (Server-Side Request Forgery)**:
+- Blocks requests to localhost, private IP ranges (10.x, 172.16–31.x, 192.168.x), and link-local/cloud-metadata addresses (169.254.x, including `169.254.169.254`)
+- Resolves DNS before fetching, so a public domain that resolves to an internal IP is also blocked
+- Only `http:`/`https:` protocols are allowed
+
+The API also enforces rate limiting (20 requests / 15 min per IP) and restricts CORS to known frontend origins.
+
+## License
+
+MIT — see [LICENSE](./LICENSE)
