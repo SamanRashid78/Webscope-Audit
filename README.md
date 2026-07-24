@@ -20,7 +20,7 @@ AuditMetrics scans any live website and produces a scored report across four cat
 
 ## Project Structure
 ```
-webscope-audit/
+audit-metrics/
 ├── index.html
 ├── css/
 │   └── styles.css
