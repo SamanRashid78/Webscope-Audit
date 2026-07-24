@@ -1,0 +1,119 @@
+/**
+ * Client PDF Report Exporter Module
+ */
+function setupPdfExport() {
+  const exportBtn = document.getElementById('exportPdfBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      exportClientAuditPdf();
+    });
+  }
+}
+
+function exportClientAuditPdf() {
+  if (!window.currentAuditData) {
+    showToast('No active audit data to export.', 'error');
+    return;
+  }
+
+  const data = window.currentAuditData;
+  showToast('Generating Client PDF Report...', 'info');
+
+  const pdfContainer = document.getElementById('pdfExportContainer');
+  if (!pdfContainer) return;
+
+  const dateStr = new Date(data.scannedAt).toLocaleDateString();
+
+  const majorItems = (data.majorDealbreakers || []).map(m => `
+    <li style="margin-bottom: 6px;">
+      <strong style="color: #ef4444;">${m.title}:</strong> ${m.businessImpact}
+    </li>
+  `).join('');
+
+  const issueRows = (data.issues || []).map(i => `
+    <tr style="border-bottom: 1px solid #e2e8f0;">
+      <td style="padding: 8px; font-weight: bold; color: ${i.severity === 'critical' ? '#ef4444' : i.severity === 'warning' ? '#f59e0b' : '#10b981'};">${i.severity.toUpperCase()}</td>
+      <td style="padding: 8px;">${i.category}</td>
+      <td style="padding: 8px;"><strong>${i.title}</strong><br><small style="color: #64748b;">${i.description}</small></td>
+      <td style="padding: 8px; font-size: 11px; color: #334155;">${i.businessImpact || i.recommendation}</td>
+    </tr>
+  `).join('');
+
+  pdfContainer.innerHTML = `
+    <div style="font-family: Arial, sans-serif; padding: 30px; background: #ffffff; color: #0f172a; max-width: 800px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+          <h1 style="margin: 0; font-size: 24px; color: #1e1b4b;">WEBSITE AUDIT REPORT</h1>
+          <p style="margin: 4px 0 0; color: #64748b;">Prepared for: ${data.hostname}</p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 32px; font-weight: bold; color: ${data.overallScore < 60 ? '#ef4444' : data.overallScore < 80 ? '#f59e0b' : '#10b981'};">${data.overallScore}/100</div>
+          <small style="color: #94a3b8;">Scanned on ${dateStr}</small>
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <h3 style="margin: 0 0 8px; font-size: 16px; color: #b45309;">Executive Summary & Major Dealbreakers</h3>
+        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #334155;">
+          ${majorItems || '<li>All core standards passed cleanly.</li>'}
+        </ul>
+      </div>
+
+      <h3 style="font-size: 16px; margin-bottom: 10px; color: #1e293b;">Category Grades Breakdown</h3>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; text-align: center;">
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 6px;">
+          <div style="font-size: 11px; color: #64748b;">SEO</div>
+          <div style="font-size: 18px; font-weight: bold; color: #0284c7;">${data.categories.seo.score}/100</div>
+        </div>
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 6px;">
+          <div style="font-size: 11px; color: #64748b;">Security</div>
+          <div style="font-size: 18px; font-weight: bold; color: #4f46e5;">${data.categories.security.score}/100</div>
+        </div>
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 6px;">
+          <div style="font-size: 11px; color: #64748b;">Performance</div>
+          <div style="font-size: 18px; font-weight: bold; color: #e11d48;">${data.categories.performance.score}/100</div>
+        </div>
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 6px;">
+          <div style="font-size: 11px; color: #64748b;">Health</div>
+          <div style="font-size: 18px; font-weight: bold; color: #059669;">${data.categories.health.score}/100</div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 16px; margin-bottom: 10px; color: #1e293b;">Detailed Audit Findings (${data.stats.totalIssues} Issues)</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px;">
+        <thead>
+          <tr style="background: #f1f5f9; text-align: left;">
+            <th style="padding: 8px;">Severity</th>
+            <th style="padding: 8px;">Category</th>
+            <th style="padding: 8px;">Issue & Description</th>
+            <th style="padding: 8px;">Business Impact / Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${issueRows}
+        </tbody>
+      </table>
+
+      <div style="border-top: 1px solid #cbd5e1; padding-top: 15px; text-align: center; font-size: 11px; color: #94a3b8;">
+        Generated by AuditMetrics Client Acquisition SaaS Platform
+      </div>
+    </div>
+  `;
+
+  if (typeof html2pdf !== 'undefined') {
+    const opt = {
+      margin: 0.3,
+      filename: `Audit_Report_${data.hostname}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(pdfContainer).save().then(() => {
+      showToast('Client PDF Report downloaded successfully!', 'success');
+    });
+  } else {
+    // Fallback print view
+    window.print();
+  }
+}
