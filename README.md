@@ -1,17 +1,17 @@
-# WebScope — Website Audit & Lead Generation Tool
+# WebScope (Website Audit & Lead Generation Tool)
 
-WebScope scans any live website and produces a scored report across four categories — **SEO, Security, Performance, and Website Health** — then auto-generates a client-ready outreach email based on the issues found. Built as a full-stack tool for freelancers/agencies to quickly audit prospects' sites and turn findings into a pitch.
+WebScope scans any live website and produces a scored report across four categories; SEO, Security, Performance, and Website Health then auto-generates a client-ready outreach email based on the issues found. Built as a full-stack tool for freelancers/agencies to quickly audit prospects' sites and turn findings into a pitch.
 
 ## Features
 
-- 🔍 **Live site scanning** — fetches real HTML and HTTP headers from any URL (Node/Express + Axios + Cheerio)
-- 📊 **4-category scoring** — SEO, Security & Headers, Performance & Speed, Website Health
-- 🧩 **Tech stack detection** — identifies CMS, frameworks, analytics, CDNs, and payment providers in use
-- 📧 **Auto-generated outreach email** — turns audit findings into a ready-to-send client pitch
-- 🆚 **Competitor comparison** — audits two URLs side by side
-- 🕓 **Scan history** — revisit past audits
-- 📄 **PDF export** — download a client-facing report
-- 🔒 **Hardened API** — SSRF protection, rate limiting, and restricted CORS
+- **Live site scanning** — fetches real HTML and HTTP headers from any URL (Node/Express + Axios + Cheerio)
+- **4-category scoring** — SEO, Security & Headers, Performance & Speed, Website Health
+- **Tech stack detection** — identifies CMS, frameworks, analytics, CDNs, and payment providers in use
+- **Auto-generated outreach email** — turns audit findings into a ready-to-send client pitch
+- **Competitor comparison** — audits two URLs side by side
+- **Scan history** — revisit past audits
+- **PDF export** — download a client-facing report
+- **Hardened API** — SSRF protection, rate limiting, and restricted CORS
 
 ## Tech Stack
 
