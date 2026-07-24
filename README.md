@@ -1,6 +1,6 @@
-# WebScope (Website Audit & Lead Generation Tool)
+# AuditMetrics (Website Audit & Lead Generation Tool)
 
-WebScope scans any live website and produces a scored report across four categories; SEO, Security, Performance, and Website Health then auto-generates a client-ready outreach email based on the issues found. Built as a full-stack tool for freelancers/agencies to quickly audit prospects' sites and turn findings into a pitch.
+AuditMetrics scans any live website and produces a scored report across four categories; SEO, Security, Performance, and Website Health then auto-generates a client-ready outreach email based on the issues found. Built as a full-stack tool for freelancers/agencies to quickly audit prospects' sites and turn findings into a pitch.
 
 ## Features
 
