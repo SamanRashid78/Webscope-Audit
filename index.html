@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Audit Tool & Client Acquisition SaaS</title>
+  <meta name="description" content="Professional website audit tool evaluating SEO, Security, Performance, Tech Stack, and General Health with automated Lead Generation client reports.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- html2pdf & jsPDF for Client PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Navigation Header -->
+  <header class="app-navbar">
+    <div class="navbar-container">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <div class="logo-text">
+          <span class="brand-name">AuditMetrics</span>
+          <span class="brand-badge">SaaS MVP</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-view="audit">
+          <i data-lucide="scan"></i> Audit Scanner
+        </button>
+        <button class="nav-tab" data-view="compare">
+          <i data-lucide="columns-2"></i> Competitor Compare
+        </button>
+        <button class="nav-tab" data-view="history">
+          <i data-lucide="history"></i> History <span class="history-count-badge" id="historyCount">0</span>
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Theme">
+          <i data-lucide="sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    
+    <!-- VIEW 1: AUDIT SCANNER VIEW -->
+    <section id="auditView" class="view-section active">
+      <!-- Search & URL Input Container -->
+      <div class="audit-hero-card">
+        <div class="hero-header">
+          <h1 class="hero-title">Professional Website Quality & Lead Audit</h1>
+          <p class="hero-subtitle">Analyze SEO, Security, Performance, Tech Stack & Health. Generate ready-to-send client acquisition proposals in seconds.</p>
+        </div>
+
+        <form id="auditForm" class="audit-input-group">
+          <div class="url-input-wrapper">
+            <i data-lucide="globe" class="input-icon"></i>
+            <input type="url" id="urlInput" placeholder="Enter target website URL (e.g. https://example.com)" required>
+          </div>
+          <button type="submit" id="scanBtn" class="primary-btn pulse-glow">
+            <i data-lucide="sparkles"></i> Run Audit Scan
+          </button>
+        </form>
+
+        <!-- Sample Benchmarks Shortcut Bar -->
+        <div class="preset-benchmarks">
+          <span class="preset-label"><i data-lucide="zap"></i> Quick 1-Click Samples:</span>
+          <div class="preset-chips">
+            <button class="chip-btn" data-preset="ecommerce">
+              <i data-lucide="shopping-cart"></i> E-Commerce Store
+            </button>
+            <button class="chip-btn" data-preset="agency">
+              <i data-lucide="briefcase"></i> Marketing Agency
+            </button>
+            <button class="chip-btn" data-preset="tech">
+              <i data-lucide="cpu"></i> Tech Startup
+            </button>
+            <button class="chip-btn" data-preset="unoptimized">
+              <i data-lucide="alert-triangle"></i> Unoptimized Site (58/100)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Scan Loading Progress Overlay -->
+      <div id="scanningProgress" class="scanning-card hidden">
+        <div class="scanner-spinner-wrapper">
+          <div class="scanner-ring"></div>
+          <i data-lucide="search" class="scanner-icon"></i>
+        </div>
+        <h3 class="scanning-title" id="scanStatusTitle">Initiating Deep Inspection...</h3>
+        <p class="scanning-url" id="scanStatusUrl">https://example.com</p>
+        
+        <div class="scan-milestones">
+          <div class="milestone-item active" id="m-http">
+            <i data-lucide="check-circle-2"></i> HTTP Protocol & Response Time
+          </div>
+          <div class="milestone-item" id="m-tech">
+            <i data-lucide="loader"></i> Detecting Tech Stack (CMS, Frameworks, Analytics)
+          </div>
+          <div class="milestone-item" id="m-seo">
+            <i data-lucide="clock"></i> SEO, Title, Meta & Sitemap Verification
+          </div>
+          <div class="milestone-item" id="m-sec">
+            <i data-lucide="clock"></i> SSL Certificate & Security Headers
+          </div>
+          <div class="milestone-item" id="m-lead">
+            <i data-lucide="clock"></i> Generating Lead Acquisition Card
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Results Dashboard Container -->
+      <div id="auditResults" class="audit-results-container hidden">
+        
+        <!-- Top Executive Summary Bar -->
+        <div class="audit-header-banner">
+          <div class="target-site-info">
+            <div class="site-favicon-box" id="siteFavicon">
+              <i data-lucide="globe"></i>
+            </div>
+            <div>
+              <h2 class="target-domain" id="resDomain">example.com</h2>
+              <p class="target-full-url" id="resFullUrl">https://example.com</p>
+              <span class="scan-timestamp" id="resTimestamp"><i data-lucide="clock"></i> Scanned Just Now</span>
+            </div>
+          </div>
+
+          <div class="header-action-buttons">
+            <button id="exportPdfBtn" class="secondary-btn">
+              <i data-lucide="download"></i> Download Client Report (PDF)
+            </button>
+            <button id="reScanBtn" class="icon-text-btn">
+              <i data-lucide="refresh-cw"></i> Re-Scan
+            </button>
+          </div>
+        </div>
+
+        <!-- Overall Score Ring & Category Summary Grid -->
+        <div class="dashboard-top-grid">
+          <!-- Overall Score Gauge Card -->
+          <div class="score-card glass-panel">
+            <div class="score-gauge-wrapper">
+              <svg class="score-ring-svg" viewBox="0 0 160 160">
+                <circle class="score-ring-bg" cx="80" cy="80" r="68"></circle>
+                <circle id="scoreRingProgress" class="score-ring-fill" cx="80" cy="80" r="68" stroke-dasharray="427" stroke-dashoffset="100"></circle>
+              </svg>
+              <div class="score-gauge-content">
+                <span id="scoreValue" class="score-number">--</span>
+                <span class="score-denom">/100</span>
+                <span id="scoreGrade" class="score-grade-badge">Evaluating</span>
+              </div>
+            </div>
+            <div class="score-meta">
+              <h3 class="score-title">Overall Quality Score</h3>
+              <p class="score-desc" id="scoreVerdict">Calculated from weighted audit checks across 4 core categories.</p>
+            </div>
+          </div>
+
+          <!-- Category Score Grid -->
+          <div class="category-scores-grid">
+            <div class="category-card glass-panel" data-category="SEO">
+              <div class="cat-header">
+                <i data-lucide="search" class="cat-icon seo"></i>
+                <span class="cat-name">SEO Quality</span>
+              </div>
+              <div class="cat-score-bar">
+                <div id="catBarSeo" class="cat-bar-fill seo" style="width: 0%;"></div>
+              </div>
+              <div class="cat-footer">
+                <span id="catScoreSeo" class="cat-score-num">--/100</span>
+                <span id="catStatusSeo" class="cat-status-text">--</span>
+              </div>
+            </div>
+
+            <div class="category-card glass-panel" data-category="Security">
+              <div class="cat-header">
+                <i data-lucide="shield" class="cat-icon security"></i>
+                <span class="cat-name">Security & Headers</span>
+              </div>
+              <div class="cat-score-bar">
+                <div id="catBarSecurity" class="cat-bar-fill security" style="width: 0%;"></div>
+              </div>
+              <div class="cat-footer">
+                <span id="catScoreSecurity" class="cat-score-num">--/100</span>
+                <span id="catStatusSecurity" class="cat-status-text">--</span>
+              </div>
+            </div>
+
+            <div class="category-card glass-panel" data-category="Performance">
+              <div class="cat-header">
+                <i data-lucide="gauge" class="cat-icon perf"></i>
+                <span class="cat-name">Performance & Speed</span>
+              </div>
+              <div class="cat-score-bar">
+                <div id="catBarPerf" class="cat-bar-fill perf" style="width: 0%;"></div>
+              </div>
+              <div class="cat-footer">
+                <span id="catScorePerf" class="cat-score-num">--/100</span>
+                <span id="catStatusPerf" class="cat-status-text">--</span>
+              </div>
+            </div>
+
+            <div class="category-card glass-panel" data-category="Health">
+              <div class="cat-header">
+                <i data-lucide="heart-pulse" class="cat-icon health"></i>
+                <span class="cat-name">Website Health</span>
+              </div>
+              <div class="cat-score-bar">
+                <div id="catBarHealth" class="cat-bar-fill health" style="width: 0%;"></div>
+              </div>
+              <div class="cat-footer">
+                <span id="catScoreHealth" class="cat-score-num">--/100</span>
+                <span id="catStatusHealth" class="cat-status-text">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detected Tech Stack Section -->
+        <div class="tech-stack-card glass-panel">
+          <div class="tech-stack-header">
+            <h3><i data-lucide="cpu"></i> Detected Technologies & Stack</h3>
+            <span class="tech-count-tag" id="techCountTag">0 Detected</span>
+          </div>
+          <div class="tech-badges-list" id="techBadgesContainer">
+            <!-- Tech badges injected via JS -->
+          </div>
+        </div>
+
+        <!-- ⭐ KILLER FEATURE: LEAD GENERATOR CARD -->
+        <div class="lead-generator-card glass-panel highlight-gold">
+          <div class="lead-card-header">
+            <div class="lead-title-box">
+              <span class="killer-badge"><i data-lucide="star"></i> Killer Feature</span>
+              <h2>Client Acquisition Lead Card</h2>
+              <p>Turn this audit into a high-converting client pitch or outreach email.</p>
+            </div>
+            <button id="copyOutreachBtn" class="primary-btn glow-gold">
+              <i data-lucide="copy"></i> Copy Outreach Pitch Email
+            </button>
+          </div>
+
+          <div class="lead-summary-box">
+            <div class="summary-score-badge">
+              <span>Audit Result:</span>
+              <strong id="leadScoreText">58 / 100</strong>
+            </div>
+
+            <div class="major-dealbreakers-box">
+              <h4><i data-lucide="alert-triangle"></i> Top Major Dealbreakers (Business Impact):</h4>
+              <ul class="dealbreakers-list" id="leadDealbreakersList">
+                <!-- Injected via JS -->
+              </ul>
+            </div>
+          </div>
+
+          <div class="email-preview-wrapper">
+            <div class="email-header">
+              <span class="email-subject-label"><i data-lucide="mail"></i> Generated Pitch Email Preview:</span>
+            </div>
+            <pre class="email-body-code" id="leadEmailPreview"></pre>
+          </div>
+        </div>
+
+        <!-- Filterable Detailed Issues List -->
+        <div class="issues-section glass-panel">
+          <div class="issues-filter-bar">
+            <div class="issues-title-group">
+              <h3><i data-lucide="list-checks"></i> Audit Issues & Business Impact</h3>
+              <span id="issuesCountBadge" class="issues-count-badge">0 Issues Found</span>
+            </div>
+
+            <div class="filter-controls">
+              <!-- Severity Filters -->
+              <div class="filter-pill-group">
+                <button class="filter-pill active" data-filter="all">All</button>
+                <button class="filter-pill critical" data-filter="critical">
+                  <span class="dot critical"></span> Critical (<span id="countCritical">0</span>)
+                </button>
+                <button class="filter-pill warning" data-filter="warning">
+                  <span class="dot warning"></span> Warning (<span id="countWarning">0</span>)
+                </button>
+                <button class="filter-pill passed" data-filter="passed">
+                  <span class="dot passed"></span> Passed (<span id="countPassed">0</span>)
+                </button>
+              </div>
+
+              <!-- Category Dropdown -->
+              <select id="categoryFilterSelect" class="custom-select">
+                <option value="all">All Categories</option>
+                <option value="SEO">SEO</option>
+                <option value="Security">Security</option>
+                <option value="Performance">Performance</option>
+                <option value="Health">Website Health</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Issues Accordion List Container -->
+          <div id="issuesListContainer" class="issues-accordion-list">
+            <!-- Issue cards injected dynamically via JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: COMPETITOR COMPARISON VIEW -->
+    <section id="compareView" class="view-section">
+      <div class="section-card glass-panel">
+        <div class="section-header">
+          <h2><i data-lucide="columns-2"></i> Side-by-Side Competitor Comparison</h2>
+          <p>Compare your website directly against a competitor domain to identify opportunities.</p>
+        </div>
+
+        <form id="compareForm" class="compare-input-grid">
+          <div class="compare-input-box">
+            <label for="urlA">Your Website (Site A):</label>
+            <input type="url" id="urlA" placeholder="https://yoursite.com" required>
+          </div>
+          <div class="versus-divider">VS</div>
+          <div class="compare-input-box">
+            <label for="urlB">Competitor Website (Site B):</label>
+            <input type="url" id="urlB" placeholder="https://competitor.com" required>
+          </div>
+          <button type="submit" id="runCompareBtn" class="primary-btn full-width">
+            <i data-lucide="git-compare"></i> Compare Domains Side-by-Side
+          </button>
+        </form>
+
+        <div id="compareResults" class="compare-results-grid hidden">
+          <!-- Comparison side-by-side matrices injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: AUDIT HISTORY VIEW -->
+    <section id="historyView" class="view-section">
+      <div class="section-card glass-panel">
+        <div class="history-header">
+          <div>
+            <h2><i data-lucide="history"></i> Saved Audit History</h2>
+            <p>Access and re-load previously scanned website audits saved in your local browser history.</p>
+          </div>
+          <button id="clearHistoryBtn" class="danger-btn">
+            <i data-lucide="trash-2"></i> Clear History
+          </button>
+        </div>
+
+        <div id="historyTableContainer" class="history-table-wrapper">
+          <!-- History items list injected via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PDF Export Container (Offscreen Printable Container) -->
+  <div id="pdfExportContainer" class="pdf-export-hidden"></div>
+
+  <!-- Notification Toast Popup -->
+  <div id="toastNotification" class="toast hidden">
+    <i data-lucide="info" id="toastIcon"></i>
+    <span id="toastMessage">Notification message</span>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/presetData.js"></script>
+  <script src="js/techDetector.js"></script>
+  <script src="js/seoAuditor.js"></script>
+  <script src="js/securityAuditor.js"></script>
+  <script src="js/perfAuditor.js"></script>
+  <script src="js/healthAuditor.js"></script>
+  <script src="js/auditEngine.js"></script>
+  <script src="js/leadGenerator.js"></script>
+  <script src="js/competitorCompare.js"></script>
+  <script src="js/historyManager.js"></script>
+  <script src="js/pdfExporter.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
